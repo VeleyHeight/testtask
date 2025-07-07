@@ -3,10 +3,12 @@ package org.example.usersservice.utils;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.usersservice.usersDTO.JwtAuthenticationDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -21,9 +23,14 @@ import java.util.Date;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JWTUtils {
-    String secret = "secret-key";
-    Integer expiration = 3600000, refreshExpiration = 604800000;
+    @Value("${jwt.secret}")
+    private String secret;
+    @Value("${jwt.expiration}")
+    Integer expiration;
+    @Value("${jwt.refresh-expiration}")
+    Integer refreshExpiration;
 
     public JwtAuthenticationDTO generateAccessAndRefreshToken(UserDetails userDetails) {
         return new JwtAuthenticationDTO(generateToken(userDetails), generateRefreshToken(userDetails));

@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.usersservice.usersDTO.JwtAuthenticationDTO;
 import org.example.usersservice.usersDTO.UsersDTO;
+import org.example.usersservice.usersDTO.UsersLoginDTO;
 import org.example.usersservice.usersService.UsersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,8 @@ public class UsersController {
     private final UsersService service;
 
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthenticationDTO> login(@Valid @RequestBody UsersDTO usersDTO) {
-        return ResponseEntity.ok().body(service.createToken(usersDTO));
+    public ResponseEntity<JwtAuthenticationDTO> login(@Valid @RequestBody UsersLoginDTO usersLoginDTO) {
+        return ResponseEntity.ok().body(service.createToken(usersLoginDTO));
     }
 
     @PostMapping("/signup")

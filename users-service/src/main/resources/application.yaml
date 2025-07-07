@@ -7,13 +7,19 @@ spring:
       fail-fast: true
   config:
     import: configserver:http://localhost:8888
+  jpa:
+    hibernate:
+      ddl-auto: create
+  datasource:
+    url: jdbc:postgresql://localhost:5432/users-service
+    username: postgres
+    password: 1234
+    driver-class-name: org.postgresql.Driver
 eureka:
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${server.port}
 jwt:
-  secret: your-strong-secret-key
+  secret: this-is-very-strong-secret-key-with-32-bytes-long
   expiration: 3600000
   refresh-expiration: 604800000

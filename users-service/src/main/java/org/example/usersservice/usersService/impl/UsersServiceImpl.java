@@ -7,6 +7,7 @@ import org.example.usersservice.models.Users;
 import org.example.usersservice.repository.UsersRepository;
 import org.example.usersservice.usersDTO.JwtAuthenticationDTO;
 import org.example.usersservice.usersDTO.UsersDTO;
+import org.example.usersservice.usersDTO.UsersLoginDTO;
 import org.example.usersservice.usersService.UsersService;
 import org.example.usersservice.utils.JWTUtils;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,7 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     @Transactional
     public UsersDTO save(UsersDTO usersDTO) {
         log.info("Saving users: {}", usersDTO);
-        if(usersRepository.exsistsByUsername(usersDTO.userName())){
+        if(usersRepository.existsByUsername(usersDTO.username())){
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User with username  already exists");
         }
         var users = usersMapper.toUsers(usersDTO);
@@ -49,9 +50,9 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
 
     @Override
     @Transactional
-    public JwtAuthenticationDTO createToken(UsersDTO usersDTO) {
-        UserDetails userDetails = this.loadUserByUsername(usersDTO.userName());
-        if (!passwordEncoder.matches(usersDTO.userPassword(), userDetails.getPassword())) {
+    public JwtAuthenticationDTO createToken(UsersLoginDTO usersLoginDTO) {
+        UserDetails userDetails = this.loadUserByUsername(usersLoginDTO.username());
+        if (!passwordEncoder.matches(usersLoginDTO.password(), userDetails.getPassword())) {
             throw new BadCredentialsException("Invalid password");
         }
         return jwtUtils.generateAccessAndRefreshToken(userDetails);
