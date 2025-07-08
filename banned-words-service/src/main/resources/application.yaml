@@ -1,6 +1,6 @@
 spring:
   application:
-    name: users-service
+    name: banned-words-service
   cloud:
     config:
       uri: http://localhost:8888
@@ -11,7 +11,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/users-service
+    url: jdbc:postgresql://localhost:5432/banned-words-service
     username: postgres
     password: 1234
     driver-class-name: org.postgresql.Driver
@@ -19,7 +19,3 @@ eureka:
   instance:
     hostname: localhost
     instance-id: ${spring.application.name}:${server.port}
-jwt:
-  secret: this-is-very-strong-secret-key-with-32-bytes-long
-  expiration: 3600000
-  refresh-expiration: 604800000
