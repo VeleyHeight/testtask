@@ -5,12 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.example.bannedwordsservice.dto.BannedWordsDTORequest;
 import org.example.bannedwordsservice.dto.BannedWordsDTOResponse;
+import org.example.bannedwordsservice.dto.CheckBannedWordsDTORequest;
 import org.example.bannedwordsservice.service.BannedWordsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,14 +30,14 @@ public class BannedWordsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(bannedWordsService.save(word));
     }
 
-    @DeleteMapping("{word}")
+    @DeleteMapping("/{word}")
     ResponseEntity<Void> deleteBannedWords(@Valid @PathVariable BannedWordsDTORequest word) {
         bannedWordsService.delete(word);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/check/{word}")
-    ResponseEntity<Boolean> checkBannedWords(@Valid @PathVariable BannedWordsDTORequest word) {
-        return ResponseEntity.ok().body(bannedWordsService.isBanned(word));
+    @PostMapping("/check")
+    ResponseEntity<Set<String>> checkBannedWords(@Valid @RequestBody CheckBannedWordsDTORequest content) {
+        return ResponseEntity.ok().body(bannedWordsService.isBanned(content));
     }
 }

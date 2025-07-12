@@ -3,6 +3,7 @@ package org.example.usersservice.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.usersservice.usersDTO.JwtAuthenticationDTO;
+import org.example.usersservice.usersDTO.RefreshTokenDTO;
 import org.example.usersservice.usersDTO.UsersDTO;
 import org.example.usersservice.usersDTO.UsersLoginDTO;
 import org.example.usersservice.usersService.UsersService;
@@ -27,7 +28,7 @@ public class UsersController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<JwtAuthenticationDTO> refresh(@Valid @RequestBody String refreshToken) throws Exception {
+    public ResponseEntity<JwtAuthenticationDTO> refresh(@Valid @RequestBody RefreshTokenDTO refreshToken) throws Exception {
         return ResponseEntity.ok(service.updateToken(refreshToken));
     }
 }

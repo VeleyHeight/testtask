@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.usersservice.usersDTO.JwtAuthenticationDTO;
+import org.example.usersservice.usersService.impl.UsersDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,25 +42,29 @@ public class JWTUtils {
     }
 
     private String generateToken(UserDetails userDetails){
+        UsersDetailsImpl user = (UsersDetailsImpl) userDetails;
         return Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .subject(userDetails.getUsername())
-                .claim("roles", userDetails.getAuthorities().stream()
+                .claim("roles", user.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .toList())
+                .claim("id",user.getId())
                 .compact();
     }
     private String generateRefreshToken(UserDetails userDetails){
+        UsersDetailsImpl user = (UsersDetailsImpl) userDetails;
         return Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis()+refreshExpiration))
                 .subject(userDetails.getUsername())
-                .claim("roles", userDetails.getAuthorities().stream()
+                .claim("roles", user.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .toList())
+                .claim("id",user.getId())
                 .compact();
     }
 
@@ -73,7 +78,7 @@ public class JWTUtils {
             return true;
         }
         catch (Exception e){
-            log.warn("Ошибка при валидации токена: {}", e.getMessage());
+            log.warn("Error with validating token: {}", e.getMessage());
         }
         return false;
     }

@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: post-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+      fail-fast: true
+  config:
+    import: configserver:http://localhost:8888
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://localhost:5432/banned-words-service
+    username: postgres
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+eureka:
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${server.port}
+post:
+  length: 1000
+jwt:
+  secret: this-is-very-strong-secret-key-with-32-bytes-long

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BannedWordsRepository extends JpaRepository<BannedWords, Integer> {
-    boolean existsByWord(String word);
+    boolean existsByWord(String content);
     void deleteByWord(String word);
 }

@@ -6,6 +6,7 @@ import org.example.usersservice.mapper.UsersMapper;
 import org.example.usersservice.models.Users;
 import org.example.usersservice.repository.UsersRepository;
 import org.example.usersservice.usersDTO.JwtAuthenticationDTO;
+import org.example.usersservice.usersDTO.RefreshTokenDTO;
 import org.example.usersservice.usersDTO.UsersDTO;
 import org.example.usersservice.usersDTO.UsersLoginDTO;
 import org.example.usersservice.usersService.UsersService;
@@ -60,12 +61,12 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
 
     @Override
     @Transactional
-    public JwtAuthenticationDTO updateToken(String token) throws Exception {
-        if(jwtUtils.validateToken(token)) {
-            Users users = usersRepository.findByUsername(jwtUtils.extractUsername(token))
+    public JwtAuthenticationDTO updateToken(RefreshTokenDTO token) throws Exception {
+        if(jwtUtils.validateToken(token.refreshToken())) {
+            Users users = usersRepository.findByUsername(jwtUtils.extractUsername(token.refreshToken()))
                     .orElseThrow(() -> new BadCredentialsException("Invalid token"));
             UserDetails userDetails = this.loadUserByUsername(users.getUsername());
-            return jwtUtils.refreshAccessAndRefreshToken(userDetails, token);
+            return jwtUtils.refreshAccessAndRefreshToken(userDetails, token.refreshToken());
         }
         throw new AuthenticationException("Invalid token");
     }
@@ -75,7 +76,7 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return usersRepository.findByUsername(username).map(users -> {
             log.info("User roles for {}: {}", username, users.getRoles());
-            return new User(users.getUsername(), users.getPassword(), Collections.singleton(users.getRoles()));
+            return new UsersDetailsImpl(users.getId(), users.getUsername(), users.getPassword(), Collections.singleton(users.getRoles()));
         }).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
     }
 }

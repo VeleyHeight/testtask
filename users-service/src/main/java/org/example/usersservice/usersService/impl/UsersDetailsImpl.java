@@ -1,7 +1,9 @@
 package org.example.usersservice.usersService.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -9,12 +11,13 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UsersDetailsImpl implements UserDetails {
-    private Integer id;
-    private String username;
-    private String password;
-    private Collection<? extends GrantedAuthority> authorities;
+    @Getter
+    private final Integer id;
+    private final String username;
+    private final String password;
+    private final Collection<? extends GrantedAuthority> authorities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
