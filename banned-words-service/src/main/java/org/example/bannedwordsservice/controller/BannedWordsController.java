@@ -21,7 +21,7 @@ public class BannedWordsController {
     private final BannedWordsService bannedWordsService;
 
     @GetMapping
-    ResponseEntity<List<String>> getBannedWords() {
+    ResponseEntity<Set<String>> getBannedWords() {
         return ResponseEntity.ok(bannedWordsService.getAllBannedWords());
     }
 

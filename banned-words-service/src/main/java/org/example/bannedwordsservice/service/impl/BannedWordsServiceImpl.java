@@ -29,9 +29,9 @@ public class BannedWordsServiceImpl implements BannedWordsService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<String> getAllBannedWords() {
+    public Set<String> getAllBannedWords() {
         log.info("Get all banned words");
-        return bannedWordsRepository.findAll().stream().map(BannedWords::getWord).toList();
+        return bannedWordsRepository.findAll().stream().map(BannedWords::getWord).collect(Collectors.toSet());
     }
 
     @Override

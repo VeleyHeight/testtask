@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface BannedWordsService {
-    List<String> getAllBannedWords();
+    Set<String> getAllBannedWords();
     BannedWordsDTOResponse save(BannedWordsDTORequest word);
     void delete(BannedWordsDTORequest word);
     Set<String> isBanned(CheckBannedWordsDTORequest content);
