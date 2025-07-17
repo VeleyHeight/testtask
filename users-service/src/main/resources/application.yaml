@@ -6,7 +6,7 @@ spring:
       uri: http://localhost:8888
       fail-fast: true
   config:
-    import: configserver:http://localhost:8888
+    import: configserver:${spring.cloud.config.uri}
   jpa:
     hibernate:
       ddl-auto: update
