@@ -15,6 +15,16 @@ spring:
     username: postgres
     password: 1234
     driver-class-name: org.postgresql.Driver
+  kafka:
+    bootstrap-servers: kafka:29092
+    consumer:
+      properties:
+        spring.json.use.type.headers: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: latest
+      group-id: analytic-post-group
+      enable-auto-commit: true
 eureka:
   instance:
     hostname: localhost

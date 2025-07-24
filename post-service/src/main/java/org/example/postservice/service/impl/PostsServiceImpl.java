@@ -13,6 +13,7 @@ import org.example.postservice.repository.PostsRepository;
 import org.example.postservice.service.PostsService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,8 @@ public class PostsServiceImpl implements PostsService {
     private final BannedWordsFeign bannedWordsFeign;
     private final PostsMapper mapper;
     private final PostsRepository repository;
-    private final AnalyticPostFeign analyticPostFeign;
+//    private final AnalyticPostFeign analyticPostFeign;
+    private final KafkaTemplate<String, AnalyticDTO> kafkaTemplate;
 
     @Override
     @Transactional
@@ -40,7 +42,8 @@ public class PostsServiceImpl implements PostsService {
         if(postsDTORequest.content().length() > maxLength){
             requestPost.setStatus(PostsStatus.DECLINED);
             var analyticPost = mapper.toDeclanedAnalyticDTO(requestPost, PostsReason.LENGTH_EXCEEDED, Set.of());
-            analyticPostFeign.savePost(analyticPost);
+//            analyticPostFeign.savePost(analyticPost);
+            kafkaTemplate.send("post-event", analyticPost);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Post '%s' exceeds max length (%d > %d)"
                             .formatted(postsDTORequest.title(), postsDTORequest.content().length(), maxLength));
@@ -50,7 +53,8 @@ public class PostsServiceImpl implements PostsService {
             if(!setBannedWords.isEmpty()){
                 requestPost.setStatus(PostsStatus.DECLINED);
                 var analyticPost = mapper.toDeclanedAnalyticDTO(requestPost, PostsReason.BANNED_WORDS, setBannedWords);
-                analyticPostFeign.savePost(analyticPost);
+//                analyticPostFeign.savePost(analyticPost);
+                kafkaTemplate.send("post-event", analyticPost);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "Post '%s' contains banned words: %s".formatted(postsDTORequest.title(), setBannedWords));
             }
@@ -61,7 +65,8 @@ public class PostsServiceImpl implements PostsService {
         requestPost.setStatus(PostsStatus.PUBLISHED);
         var savedPost = repository.save(requestPost);
         var analyticPost = mapper.toPublishedAnalyticDTO(savedPost, PostsReason.NONE, Set.of());
-        analyticPostFeign.savePost(analyticPost);
+//        analyticPostFeign.savePost(analyticPost);
+        kafkaTemplate.send("post-event", analyticPost);
         return mapper.toResponse(savedPost);
     }
 
